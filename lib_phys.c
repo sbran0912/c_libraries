@@ -63,8 +63,8 @@ void _resetPosBox(Shape *box, Vector2 v) {
 
 void _drawBall(Shape *ball, float thick, Color c) {
     DrawRing(ball->location, ball->radius - 3, ball->radius, 0, 360, 1, c);
-    // DrawCircleV(location.pos,radius, c);
-    //DrawLineEx(ball->location, ball->orientation, thick, c);
+    DrawCircleV(ball->location,3 , c);
+    DrawLineEx(ball->location, ball->orientation, thick, c);
 }
 
 void _rotateBall(Shape* ball, float angle) {
@@ -339,9 +339,9 @@ void resolveCollBox(Shape* boxA, Shape* boxB, Vector2 cp, Vector2 normal) {
         float j_divAngular = (float)pow(Vec2DotProduct(rAP_perp, normal), 2) / boxA->inertia + (float)pow(Vec2DotProduct(rBP_perp, normal), 2) / boxB->inertia;
         float j = j_denominator / (j_divLinear + j_divAngular);
         // Grundlage für Friction berechnen (t)
-        Vector2 t = {-(normal.y), normal.x};
+        Vector2 t = {-normal.y, normal.x};
         float t_scalarprodukt = Vec2DotProduct(velocity_AB, t);
-        t = Vec2Scale(Vec2Normalize(t), (t_scalarprodukt));
+        t = Vec2Normalize(Vec2Scale(t, t_scalarprodukt));
         
 
         //apply Force        
@@ -377,7 +377,7 @@ void resolveCollBall(Shape* ballA, Shape* ballB, Vector2 normal) {
         // Grundlage für Friction berechnen
         Vector2 t = {-normal.y, normal.x};
         float t_scalarprodukt = Vec2DotProduct(velocity_AB, t);
-        t = Vec2Scale(Vec2Normalize(t), t_scalarprodukt);
+        t = Vec2Normalize(Vec2Scale(t, t_scalarprodukt));
 
         //apply Force
         Vector2 force = Vec2Add(Vec2Scale(normal, (0.8*j/ballA->mass)), Vec2Scale(t, (0.2*-j/ballA->mass)));
@@ -413,8 +413,8 @@ void resolveCollBallBox(Shape* ball, Shape* box, Vector2 cp, Vector2 normal) {
         // Grundlage für Friction berechnen
         Vector2 t = {-normal.y, normal.x};
         float t_scalarprodukt = Vec2DotProduct(velocity_AB, t);
-        t = Vec2Scale(Vec2Normalize(t), t_scalarprodukt);
-
+        t = Vec2Normalize(Vec2Scale(t, t_scalarprodukt));
+        
         // Apply Force
         Vector2 force = Vec2Add(Vec2Scale(normal, (0.8*j/ball->mass)), Vec2Scale(t, (0.05*-j/ball->mass)));
         float force_ang = Vec2DotProduct(rA_perp, Vec2Scale(t, 0.05*-j/ball->inertia));
