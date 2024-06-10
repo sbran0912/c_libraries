@@ -25,6 +25,72 @@ float mapNum(float n, float range_old, float range_new) {
   return (n / range_old * range_new);
 }
 
+List list_create(size_t capacity, size_t size) {
+    return (List){.array = malloc(capacity * size), .capacity = capacity, .size =  size, .count = 0};
+}
+
+void list_append(List* l, void* val) {
+    l->count++;
+    if ((l->count) > (l->capacity)) {
+        l->capacity = l->capacity + 10;
+        l->array = realloc(l->array, l->capacity * l->size);
+    }
+    char* new_val = l->array + ((l->count-1) * l->size);   //count 1 = index 0, count 2 = index 1 etc.
+    memcpy(new_val, val, l->size);
+
+}
+
+void* list_at(List* l, int index) {
+    char* val = l->array + (index * l->size);
+    return (void*)val;
+}
+
+void list_free(List* l) {
+    free(l->array);
+    l->array = NULL;
+}
+
+ListStr liststr_create(size_t capacity) {
+    return (ListStr){.array = malloc(capacity * sizeof(char*)), .capacity = capacity, .count = 0};
+}
+
+ListStr liststr_append(ListStr* l, char val[]) {
+    l->count++;
+    if ((l->count) > (l->capacity)) {
+        l->capacity = l->capacity + 10;
+        l->array = realloc(l->array, l->capacity * sizeof(char*));
+    }
+    l->array[l->count-1] = malloc(strlen(val)+1);
+    strcpy(l->array[l->count-1], val);
+}
+
+void liststr_free(ListStr* l) {
+    for (size_t i = 0; i < l->count; i++) {
+        free(l->array[i]);
+    }
+    free(l->array);
+    l->array = NULL;
+}
+
+ListFloat2d listf2d_create(size_t rows, size_t cols, float val) {
+    float** arr = malloc(rows * sizeof(float*));
+    for (size_t i = 0; i < rows; i++) {
+        arr[i] = malloc(cols * sizeof(float));
+        for (size_t j = 0; j < cols;j++) {
+            arr[i][j] = val;
+        }
+    }
+    return (ListFloat2d){.array = arr, .rows = rows, .cols = cols};
+}
+
+void listf2d_free(ListFloat2d* l) {
+    for (size_t i = 0; i < l->rows; i++) {
+        free(l->array[i]);
+    }
+    free(l->array);
+    l->array = NULL;
+}
+
 Vector2 Vec2Scale(Vector2 v, float n) {
 	return (Vector2) {v.x * n, v.y * n};
 }
