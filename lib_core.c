@@ -50,11 +50,18 @@ void list_free(List* l) {
     l->array = NULL;
 }
 
+void list_reduce(List* l) {    
+    if (l->count < l->capacity) {
+        l->capacity = l->count;   //Kapazität auf Länge setzen
+        l->array = realloc(l->array, l->capacity * l->size);
+    }
+}
+
 ListStr liststr_create(size_t capacity) {
     return (ListStr){.array = malloc(capacity * sizeof(char*)), .capacity = capacity, .count = 0};
 }
 
-ListStr liststr_append(ListStr* l, char val[]) {
+void liststr_append(ListStr* l, char val[]) {
     l->count++;
     if ((l->count) > (l->capacity)) {
         l->capacity = l->capacity + 10;
@@ -70,6 +77,13 @@ void liststr_free(ListStr* l) {
     }
     free(l->array);
     l->array = NULL;
+}
+
+void liststr_reduce(ListStr* l) {    
+    if (l->count < l->capacity) {
+        l->capacity = l->count;   //Kapazität auf Länge setzen
+        l->array = realloc(l->array, l->capacity * sizeof(char*));
+    }
 }
 
 ListFloat2d listf2d_create(size_t rows, size_t cols, float val) {
@@ -90,6 +104,64 @@ void listf2d_free(ListFloat2d* l) {
     free(l->array);
     l->array = NULL;
 }
+
+void* arr_init(size_t capacity, size_t elemsize) {
+    size_t *raw = malloc(3 * sizeof(size_t) + (capacity * elemsize));
+    raw[0] = 0;                 // Number of elements currently in the array
+    raw[1] = capacity;         // capacity - how many elements can the array currently store
+    raw[2] = elemsize;           // Size of elements
+    return (void*) &raw[3];     // Pointer to the beginning of the array
+}
+
+size_t arr_len(void* arr) {
+    return *((size_t*)arr - 3);
+}
+
+size_t arr_cap(void* arr) {
+    return *((size_t*)arr - 2);
+}
+
+void arr_append(void* ref_arr, void* val) {
+    // Übergabe der Referenz des Pointers (Pointer auf Pointer)
+    size_t* raw = (size_t*)(*(void**)ref_arr) - 3;
+    size_t len = raw[0];
+    size_t cap = raw[1];
+    size_t elemsize = raw[2];
+
+    len++;                  //increase counter
+    raw[0] = len;           //save counter in array
+
+    if (len > cap) {
+        size_t new_cap = cap + 10;
+        raw[1] = new_cap;      //calculate new capacity
+        raw = realloc(raw, 3 * sizeof(size_t) + (new_cap * elemsize));
+        *(void**)ref_arr = (void*)&raw[3]; //Array-Pointer wird wieder auf richtigen Startpunkt gestellt
+    } 
+    
+    char* new_item = (void*)&raw[3] + ((len-1) * elemsize);   //count 1 = index 0, count 2 = index 1 etc.
+    memcpy(new_item, val, elemsize);
+}
+
+void arr_reduce(void* ref_arr) {
+    // Übergabe der Referenz des Pointers (Pointer auf Pointer)
+    size_t* raw = (size_t*)(*(void**)ref_arr) - 3;
+
+    size_t len = raw[0];
+    size_t cap = raw[1];
+    size_t elemsize = raw[2];
+    
+    if (len < cap) {
+        raw[1] = len; //Kapazität auf Länge setzen
+        raw = realloc(raw, 3 * sizeof(size_t) + (len * elemsize)); //Speicherbereich kürzen
+        *(void**)ref_arr = (void*)&raw[3]; //Array-Pointer wird wieder auf richtigen Startpunkt gestellt
+    }
+}
+
+void arr_destroy(void* ref_arr) {
+    size_t* raw = (size_t*)(*(void**)ref_arr) - 3;
+    free(raw);
+}
+
 
 Vector2 Vec2Scale(Vector2 v, float n) {
 	return (Vector2) {v.x * n, v.y * n};
