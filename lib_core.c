@@ -86,6 +86,19 @@ void liststr_reduce(ListStr* l) {
     }
 }
 
+ListStr split(char string[], const char delimiter) {
+    ListStr result = liststr_create(10);
+    char d[0];
+    d[0] = delimiter;
+
+    char *token = strtok(string, d);
+    while (token != NULL) {
+        liststr_append(&result, token);
+        token = strtok(NULL, d);
+    }
+    return result;
+}
+
 ListFloat2d listf2d_create(size_t rows, size_t cols, float val) {
     float** arr = malloc(rows * sizeof(float*));
     for (size_t i = 0; i < rows; i++) {
@@ -161,7 +174,6 @@ void arr_destroy(void* ref_arr) {
     size_t* raw = (size_t*)(*(void**)ref_arr) - 3;
     free(raw);
 }
-
 
 Vector2 Vec2Scale(Vector2 v, float n) {
 	return (Vector2) {v.x * n, v.y * n};

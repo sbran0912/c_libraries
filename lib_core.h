@@ -49,6 +49,7 @@ ListStr liststr_create(size_t capacity);
 void liststr_append(ListStr* l, char val[]);
 void liststr_free(ListStr* l);
 void liststr_reduce(ListStr* l);
+ListStr split(char string[], const char delimiter);
 ListFloat2d listf2d_create(size_t rows, size_t cols, float val);
 void listf2d_free(ListFloat2d* l);
 void* arr_init(size_t capacity, size_t elemsize);
