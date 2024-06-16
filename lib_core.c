@@ -57,11 +57,11 @@ void list_reduce(List* l) {
     }
 }
 
-ListStr liststr_create(size_t capacity) {
+ListStr lists_create(size_t capacity) {
     return (ListStr){.array = malloc(capacity * sizeof(char*)), .capacity = capacity, .count = 0};
 }
 
-void liststr_append(ListStr* l, char val[]) {
+void lists_append(ListStr* l, char val[]) {
     l->count++;
     if ((l->count) > (l->capacity)) {
         l->capacity = l->capacity + 10;
@@ -71,7 +71,7 @@ void liststr_append(ListStr* l, char val[]) {
     strcpy(l->array[l->count-1], val);
 }
 
-void liststr_free(ListStr* l) {
+void lists_free(ListStr* l) {
     for (size_t i = 0; i < l->count; i++) {
         free(l->array[i]);
     }
@@ -79,7 +79,7 @@ void liststr_free(ListStr* l) {
     l->array = NULL;
 }
 
-void liststr_reduce(ListStr* l) {    
+void lists_reduce(ListStr* l) {    
     if (l->count < l->capacity) {
         l->capacity = l->count;   //Kapazität auf Länge setzen
         l->array = realloc(l->array, l->capacity * sizeof(char*));
@@ -87,13 +87,13 @@ void liststr_reduce(ListStr* l) {
 }
 
 ListStr split(char string[], const char delimiter) {
-    ListStr result = liststr_create(10);
+    ListStr result = lists_create(10);
     char d[0];
     d[0] = delimiter;
 
     char *token = strtok(string, d);
     while (token != NULL) {
-        liststr_append(&result, token);
+        lists_append(&result, token);
         token = strtok(NULL, d);
     }
     return result;
