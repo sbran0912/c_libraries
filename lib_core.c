@@ -175,6 +175,36 @@ void arr_destroy(void* ref_arr) {
     free(raw);
 }
 
+void llistPush(LinkedList* list, void* data, size_t datasize) {
+    Node* new = malloc(sizeof(Node));
+    new->data = malloc(sizeof(datasize));
+    memcpy(new->data, data, datasize);
+    new->next = NULL;
+    
+    if (list->size == 0) {
+        list->head = new;
+    } else {
+        list->tail->next = new;
+    }
+    list->tail = new;
+    list->size++;
+    
+}
+
+void llistPop(LinkedList* list) {
+    if (list->size > 0) {
+        Node* tmp = list->head->next;
+        free(list->head->data);
+        free(list->head);
+        list->head = tmp;
+        list->size--;
+
+        if (list->size == 0) {
+            list->tail = NULL;
+        }
+    }
+}
+
 Vector2 Vec2Scale(Vector2 v, float n) {
 	return (Vector2) {v.x * n, v.y * n};
 }

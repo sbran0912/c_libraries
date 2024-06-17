@@ -34,6 +34,16 @@ typedef struct {
     size_t cols;     //Anzahl Spalten
 } ListFloat2d;
 
+typedef struct node_t {
+    void* data;
+    struct node_t* next;
+} Node;
+
+typedef struct linkedlist_t {
+    Node* head;
+    Node* tail;
+    size_t size;
+} LinkedList;
 
 int randomNum(int range_start, int range_end);
 float limitNum(float number, float limit);
@@ -58,6 +68,8 @@ size_t arr_cap(void* arr);
 void arr_append(void* ref_arr, void* val);
 void arr_reduce(void* ref_arr);
 void arr_destroy(void* ref_arr);
+void llistPush(LinkedList* list, void* data, size_t datasize);
+void llistPop(LinkedList* list);
 
 Vector2 Vec2Scale(Vector2 v, float n);
 Vector2 Vec2Div(Vector2 v, float n);
