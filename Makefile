@@ -9,7 +9,10 @@ CC = gcc
 CXXFLAGS = -Wall -g -std=c17 -D_POSIX_C_SOURCE=199309L
 # CXXFLAGS = -Wall -O2 -std=c17 -D_POSIX_C_SOURCE=199309L
 
+# Linux
 LDFLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt
+# Windows
+# LDFLAGS = -lraylib -lopengl32 -lgdi32 -lwinmm
 
 # Makefile settings - Can be customized.
 APPNAME = main.app
